@@ -13,13 +13,13 @@ pathDeg = [
 ];
 interval1 = 0;
 interval2 = 0;
-pathDataThis = recivedFile["pathData"];
+pathDataThis = 0;
 tileCount = 0;
-totTiles = recivedFile["pathData"].length;
+totTiles = 0;
 actionCount = 0;
-totActions = recivedFile["actions"].length;
-pataDataPointerPrev = 4;
-bpmNow = recivedFile["settings"]["bpm"];
+totActions = 0;
+pataDataPointerPrev = 0;
+bpmNow = 0;
 speedChangePointer = [];
 twirlPointer = [];
 
