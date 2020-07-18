@@ -120,6 +120,7 @@ $(function (){
             return 'Copied to Clipboard! (Ctrl + V to paste :D)';
           });
           copyToClipboard(JSON.stringify(recivedFile));
+          console.log(JSON.stringify(recivedFile));
           clearInterval(interval2);
         }
       }, 5);
