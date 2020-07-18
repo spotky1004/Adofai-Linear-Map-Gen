@@ -1,0 +1,79 @@
+* {
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  font-family: 'Poppins', sans-serif;
+}
+#backgroundArt {
+  position: absolute;
+  width: 100vw; height: 100vh;
+  background: linear-gradient(135deg, rgba(78,113,153,1) 0%,rgba(94,160,214,1) 50%,rgba(193,77,77,1) 51%,rgba(226,156,156,1) 100%);
+}
+#warpAll {
+  position: absolute;
+  left: 15vw; top: 29vh;
+  width: 70vw; height: 42vh;
+  border-radius: 1vh; box-shadow: 0 0 25px #fff;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+#welcomeTxt {
+  margin-left: 2vw;
+  font-size: 4vh; color: #444; font-weight: bolder; text-shadow: 0.4vh 0.4vh 0 #888;
+}
+#welcomeTxt > span {
+  background: linear-gradient(to right, #f22, #22f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+  font-size: 4.8vh;
+  text-shadow: none;
+}
+#dropFile {
+  margin: 2vh 0 0 10vw; padding: 7vh 0 0 0;
+  width: 50vw; height: 13vh;
+  text-align: center; font-size: 2vh; color: #333; text-shadow: 0 0 0.1vh #333;
+  border: 2px dashed #333;
+  background-color: rgba(200, 200, 200, 0.2);
+
+  transition: all 0.2s;
+}
+#dropFile:hover {
+  transform: scale(1.05);
+  background-color: rgba(200, 200, 200, 0.4);
+}
+#transferProgress {
+  margin-left: 5%; padding-left: 5%;
+  width: 85%; height: 3vh;
+  color: white;
+  background-color: #888;
+}
+#downloadFile {
+  margin: 5vh auto 0 auto; padding-top: 1vh;
+  width: 30vw; height: 4vh;
+  color: #eee; text-align: center; font-size: 2.5vh;
+  box-shadow: 0.55vh 0.55vh 0.3vh #666;
+  background-color: rgba(40, 40, 40, 0.3);
+
+  transition: all 0.1s;
+}
+#downloadFile:hover {
+  transform: scale(1.1);
+  background-color: rgba(40, 40, 40, 0.6);
+
+  transition: all 0.5s;
+}
+#downloadFile:active {
+  transform: scale(1);
+  color: #000;
+  background-color: rgba(255, 255, 255, 0.7);
+
+  transition: all 0s;
+}
+@keyframes goApper {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
