@@ -28,6 +28,15 @@ $(function (){
     openTextFile();
   });
 
+  function copyToClipboard(val) {
+    var t = document.createElement("textarea");
+    document.body.appendChild(t);
+    t.value = val;
+    t.select();
+    document.execCommand('copy');
+    document.body.removeChild(t);
+  }
+
   function openTextFile() {
       var input = document.createElement("input");
       input.type = "file";
@@ -107,8 +116,11 @@ $(function (){
         });
         $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 200, 113, 0.8) ' + tileCount/totTiles*100 + '% ' + tileCount/totTiles*100 + '%, #aaa ' + tileCount/totTiles*100 + '%)');
         if (tileCount >= totTiles) {
+          $('#transferProgress').html(function (index,html) {
+            return 'Copied to Clipboard! (Ctrl + V to paste :D)';
+          });
+          copyToClipboard(JSON.stringify(recivedFile));
           clearInterval(interval2);
-          console.log(JSON.stringify(recivedFile));
         }
       }, 5);
     }, totActions*3+50);
