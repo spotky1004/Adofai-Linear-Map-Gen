@@ -6,7 +6,7 @@ pathDatas = [
   'N'
 ];
 pathDeg = [
-  360, 45, 90, 135, 180,
+  0, 45, 90, 135, 180,
   225, 270, 315, 30, 60,
   120, 150, 210, 240, 300,
   330
@@ -22,6 +22,7 @@ pataDataPointerPrev = 0;
 bpmNow = 0;
 speedChangePointer = [];
 twirlPointer = [];
+twirlDirect = 0;
 
 $(function (){
   $(document).on('click','#dropFile',function() {
@@ -50,8 +51,9 @@ $(function (){
     var output = document.getElementById('welcomeTxt');
     var reader = new FileReader();
     reader.onload = function () {
-      console.log(reader.result);
-      recivedFile = JSON.parse(String(reader.result).replace(', ,', ','));
+      recivedFile = String(reader.result).replace(', ,', ',').replace(/},/g, '}').replace(/}/g, '},').replace(',\n	]', '\n	]').replace(/,]}/g, ']}');
+      recivedFile = recivedFile.substr(0, recivedFile.lastIndexOf(","));
+      recivedFile = JSON.parse(recivedFile);
       makeMapLinear();
     };
     reader.readAsText(file, /* optional */ "euc-kr");
@@ -61,7 +63,11 @@ $(function (){
       twirlPointer.push(recivedFile["actions"][i]["floor"]);
     }
     if (recivedFile["actions"][i]["eventType"] == "SetSpeed") {
-      speedChangePointer.push([recivedFile["actions"][i]["floor"], recivedFile["actions"][i]["beatsPerMinute"]]);
+      if (recivedFile["actions"][i]["speedType"] == "Bpm") {
+        speedChangePointer.push([0, recivedFile["actions"][i]["floor"], recivedFile["actions"][i]["beatsPerMinute"], i]);
+      } else {
+        speedChangePointer.push([1, recivedFile["actions"][i]["floor"], recivedFile["actions"][i]["bpmMultiplier"], i]);
+      }
     }
   }
   function calcTile(i) {
@@ -71,15 +77,34 @@ $(function (){
         break;
       }
     }
-    angleOffset = pathDeg[pataDataPointer]-pathDeg[pataDataPointerPrev]+180;
+    if (twirlPointer[twirlPointerP] == i) {
+      twirlDirect = !twirlDirect;
+      twirlPointerP++;
+    }
+    if (twirlDirect == 0) {
+      angleOffset = (Math.abs(pathDeg[pataDataPointer]-pathDeg[pataDataPointerPrev]+180))%360;
+    } else {
+      angleOffset = (Math.abs(pathDeg[pataDataPointerPrev]-pathDeg[pataDataPointer]+180))%360;
+    }
     if (angleOffset == 0) {
       angleOffset = 360;
     }
-    if (angleOffset == 180) {
+    if (speedChangePointer.length != speedChangePointerP && speedChangePointer[speedChangePointerP][1] == i) {
+      dataThisPointer = speedChangePointer[speedChangePointerP];
+      if (dataThisPointer[0] == 0) {
+        bpmNow = dataThisPointer[2];
+        recivedFile["actions"][dataThisPointer[3]]["beatsPerMinute"] = Math.abs((1/(angleOffset/180))*bpmNow);
+      } else {
+        bpmNow = bpmNow*dataThisPointer[2];
+        recivedFile["actions"][dataThisPointer[3]]["beatsPerMinute"] = Math.abs((1/(angleOffset/180))*bpmNow);
+      }
+      speedChangePointerP++;
+    } else if (angleOffset == 180) {
       recivedFile["actions"].push(JSON.parse('{ "floor": ' + (i) + ', "eventType": "SetSpeed", "speedType": "Bpm", "beatsPerMinute": ' + bpmNow + ', "bpmMultiplier": 1 }'));
     } else {
       recivedFile["actions"].push(JSON.parse('{ "floor": ' + (i) + ', "eventType": "SetSpeed", "speedType": "Bpm", "beatsPerMinute": ' + Math.abs((1/(angleOffset/180))*bpmNow) + ', "bpmMultiplier": 1 }'));
     }
+    console.log(i + ', ' + angleOffset);
     recivedFile["pathData"] = recivedFile["pathData"].replaceAt(i, 'R');
     pataDataPointerPrev = pataDataPointer;
   }
@@ -94,8 +119,10 @@ $(function (){
     pataDataPointerPrev = 4;
     bpmNow = recivedFile["settings"]["bpm"];
     speedChangePointer = [];
+    speedChangePointerP = 0;
     twirlPointer = [];
-    // "eventType": "Twirl"
+    twirlPointerP = 0;
+    twirlDirect = 0;
     interval1 = setInterval( function () {
       calcAction(actionCount);
       actionCount++;
@@ -117,13 +144,13 @@ $(function (){
         $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 200, 113, 0.8) ' + tileCount/totTiles*100 + '% ' + tileCount/totTiles*100 + '%, #aaa ' + tileCount/totTiles*100 + '%)');
         if (tileCount >= totTiles) {
           $('#transferProgress').html(function (index,html) {
-            return 'Copied to Clipboard! (Ctrl + V to paste :D)';
+            return 'Copied to Clipboard! (Ctrl + V to paste OR Copy from Console :D)';
           });
           copyToClipboard(JSON.stringify(recivedFile));
           console.log(JSON.stringify(recivedFile));
           clearInterval(interval2);
         }
-      }, 5);
+      }, 10);
     }, totActions*3+50);
   }
 
