@@ -53,6 +53,8 @@ $(function (){
     reader.onload = function () {
       recivedFile = String(reader.result).replace(', ,', ',').replace(/},/g, '}').replace(/}/g, '},').replace(',\n	]', '\n	]').replace(/,]}/g, ']}');
       recivedFile = recivedFile.substr(0, recivedFile.lastIndexOf(","));
+      recivedFile = recivedFile.replace(/, },/g, '},');
+      console.log(recivedFile);
       recivedFile = JSON.parse(recivedFile);
       makeMapLinear();
     };
@@ -63,10 +65,10 @@ $(function (){
       twirlPointer.push(recivedFile["actions"][i]["floor"]);
     }
     if (recivedFile["actions"][i]["eventType"] == "SetSpeed") {
-      if (recivedFile["actions"][i]["speedType"] == "Bpm") {
-        speedChangePointer.push([0, recivedFile["actions"][i]["floor"], recivedFile["actions"][i]["beatsPerMinute"], i]);
-      } else {
+      if (recivedFile["actions"][i]["speedType"] == "Multiplier") {
         speedChangePointer.push([1, recivedFile["actions"][i]["floor"], recivedFile["actions"][i]["bpmMultiplier"], i]);
+      } else {
+        speedChangePointer.push([0, recivedFile["actions"][i]["floor"], recivedFile["actions"][i]["beatsPerMinute"], i]);
       }
     }
   }
@@ -81,7 +83,7 @@ $(function (){
       twirlDirect = !twirlDirect;
       twirlPointerP++;
     }
-    angleOffset = (pathDeg[pataDataPointer]-pathDeg[pataDataPointerPrev]+180)%360
+    angleOffset = Math.abs(pathDeg[pataDataPointer]-pathDeg[pataDataPointerPrev]+180)%360;
     if (twirlDirect == 1) {
       angleOffset = 360-angleOffset;
     }
@@ -104,9 +106,8 @@ $(function (){
     } else if (angleOffset == 180) {
       recivedFile["actions"].push(JSON.parse('{ "floor": ' + (i) + ', "eventType": "SetSpeed", "speedType": "Bpm", "beatsPerMinute": ' + bpmNow + ', "bpmMultiplier": 1 }'));
     } else {
-      recivedFile["actions"].push(JSON.parse('{ "floor": ' + (i) + ', "eventType": "SetSpeed", "speedType": "Bpm", "beatsPerMinute": ' + Math.abs((1/(angleOffset/180))*bpmNow) + ', "bpmMultiplier": 1 }'));
+      recivedFile["actions"].push(JSON.parse('{ "floor": ' + (i) + ', "eventType": "SetSpeed", "speedType": "Bpm", "beatsPerMinute": ' + ((1/(angleOffset/180))*bpmNow) + ', "bpmMultiplier": 1 }'));
     }
-    console.log(i + ', ' + angleOffset);
     recivedFile["pathData"] = recivedFile["pathData"].replaceAt(i, 'R');
     pataDataPointerPrev = pataDataPointer;
   }
