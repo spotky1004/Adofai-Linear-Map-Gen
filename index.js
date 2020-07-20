@@ -81,13 +81,15 @@ $(function (){
       twirlDirect = !twirlDirect;
       twirlPointerP++;
     }
-    if (twirlDirect == 0) {
-      angleOffset = (Math.abs(pathDeg[pataDataPointer]-pathDeg[pataDataPointerPrev]+180))%360;
-    } else {
-      angleOffset = (Math.abs(pathDeg[pataDataPointerPrev]-pathDeg[pataDataPointer]+180))%360;
+    angleOffset = (pathDeg[pataDataPointer]-pathDeg[pataDataPointerPrev]+180)%360
+    if (twirlDirect == 1) {
+      angleOffset = 360-angleOffset;
     }
     if (angleOffset == 0) {
       angleOffset = 360;
+    }
+    if (angleOffset > 360) {
+      console.log(pathDeg[pataDataPointerPrev] + ', ' + pathDeg[pataDataPointer] + ', ' + angleOffset);
     }
     if (speedChangePointer.length != speedChangePointerP && speedChangePointer[speedChangePointerP][1] == i) {
       dataThisPointer = speedChangePointer[speedChangePointerP];
