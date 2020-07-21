@@ -88,7 +88,8 @@
   color: #f44; font-size: 3vh;
 }
 .delEffButton {
-  margin: 0.5vh 1vw; padding: 0.5vh 0 0 0;
+  display: block; float: left;
+  margin: 0.5vh 2vw; padding: 0.5vh 0 0 0;
   width: 16vw; height: 3.5vh;
   font-size: 2vh; text-align: center; color: #fff; text-shadow: 0 0 0.3vh #fff;
   box-shadow: 0.3vh 0.3vh 0.3vh #222;

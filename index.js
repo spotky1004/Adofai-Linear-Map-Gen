@@ -192,22 +192,24 @@ $(function (){
       if (actionCount >= totActions) {
         clearInterval(interval1);
       }
-    }, 3);
+    }, 5);
     setTimeout( function () {
       interval2 = setInterval( function () {
-        calcTile(tileCount);
+        if (delEffectToggle[1] == 0) {
+          calcTile(tileCount);
+          $('#transferProgress').html(function (index,html) {
+            return (tileCount/totTiles*100).toFixed(1) + '%';
+          });
+          $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 200, 113, 0.8) ' + tileCount/totTiles*100 + '% ' + tileCount/totTiles*100 + '%, #aaa ' + tileCount/totTiles*100 + '%)');
+        }
         tileCount++;
-        $('#transferProgress').html(function (index,html) {
-          return (tileCount/totTiles*100).toFixed(1) + '%';
-        });
-        $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 200, 113, 0.8) ' + tileCount/totTiles*100 + '% ' + tileCount/totTiles*100 + '%, #aaa ' + tileCount/totTiles*100 + '%)');
-        if (tileCount >= totTiles) {
+        if (tileCount >= totTiles || delEffectToggle[1] == 1) {
           clearInterval(interval2);
         }
-      }, 10);
-    }, totActions*3+50);
+      }, 5);
+    }, totActions*5+50);
     setTimeout( function () {
-      delActionCount = totActions;
+      delActionCount = totActions-1;
       interval3 = setInterval( function () {
         if (totActions >= 1) {
           calcDelAction(delActionCount);
@@ -217,7 +219,7 @@ $(function (){
           });
           $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 72, 45, 0.8) ' + (1-delActionCount/totActions)*100 + '% ' + (1-delActionCount/totActions)*100 + '%, #aaa ' + (1-delActionCount/totActions)*100 + '%)');
         }
-        if (delActionCount <= -1 || totActions < 1) {
+        if (delActionCount <= 0 || totActions < 1) {
           $('#transferProgress').html(function (index,html) {
             return 'Copied to Clipboard! (Ctrl + V to paste OR Copy from Console :D)';
           });
@@ -230,7 +232,7 @@ $(function (){
           clearInterval(interval3);
         }
       }, 4);
-    }, totActions*3+100+10*totTiles);
+    }, totActions*5+100+((delEffectToggle[1] == 0) ? 5*totTiles : 0 ));
   }
 
   $('#warpAll').show();
