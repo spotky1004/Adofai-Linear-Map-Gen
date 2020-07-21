@@ -153,6 +153,9 @@ $(function (){
     if (recivedFile["actions"][i]["eventType"] == "MoveCamera" && delEffectToggle[0] == 1) {
       deleteThis = 1;
     }
+    if (recivedFile["actions"][i]["eventType"] == "Twirl" && delEffectToggle[2] == 1) {
+      deleteThis = 1;
+    }
     if (deleteThis) {
       recivedFile["actions"].splice(i,1);
     }
@@ -228,7 +231,6 @@ $(function (){
           setTimeout( function () {
             copyToClipboard(JSON.stringify(recivedFile));
           }, 0);
-          console.log(JSON.stringify(recivedFile));
           clearInterval(interval3);
         }
       }, 4);
