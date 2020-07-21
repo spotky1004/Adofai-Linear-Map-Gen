@@ -25,7 +25,7 @@ speedChangePointer = [];
 twirlPointer = [];
 twirlDirect = 0;
 delEffectToggle = [
-  1, 0, 0, 0, 0
+  1, 0, 0, 1, 0
 ];
 delActionCount = 0;
 bpmBefore = 0;
@@ -135,17 +135,12 @@ $(function (){
       dataThisPointer = speedChangePointer[speedChangePointerP];
       if (dataThisPointer[0] == 0) {
         bpmNow = dataThisPointer[2];
-        if (Math.abs((1/(angleOffset/180))*bpmNow) != bpmBefore) {
-          recivedFile["actions"][dataThisPointer[3]]["beatsPerMinute"] = Math.abs((1/(angleOffset/180))*bpmNow);
-          bpmBefore = Math.abs((1/(angleOffset/180))*bpmNow);
-        }
-
+        recivedFile["actions"][dataThisPointer[3]]["beatsPerMinute"] = Math.abs((1/(angleOffset/180))*bpmNow);
+        bpmBefore = Math.abs((1/(angleOffset/180))*bpmNow);
       } else {
         bpmNow = bpmNow*dataThisPointer[2];
-        if (Math.abs((1/(angleOffset/180))*bpmNow) != bpmBefore) {
-          recivedFile["actions"][dataThisPointer[3]]["beatsPerMinute"] = Math.abs((1/(angleOffset/180))*bpmNow);
-          bpmBefore = Math.abs((1/(angleOffset/180))*bpmNow);
-        }
+        recivedFile["actions"][dataThisPointer[3]]["beatsPerMinute"] = Math.abs((1/(angleOffset/180))*bpmNow);
+        bpmBefore = Math.abs((1/(angleOffset/180))*bpmNow);
       }
       speedChangePointerP++;
     } else if (angleOffset == 180) {
@@ -168,6 +163,12 @@ $(function (){
       deleteThis = 1;
     }
     if (recivedFile["actions"][i]["eventType"] == "Twirl" && delEffectToggle[2] == 1) {
+      deleteThis = 1;
+    }
+    if (recivedFile["actions"][i]["eventType"] == "MoveTrack" && delEffectToggle[3] == 1) {
+      deleteThis = 1;
+    }
+    if (recivedFile["actions"][i]["eventType"] == "AnimateTrack" && delEffectToggle[4] == 1) {
       deleteThis = 1;
     }
     if (deleteThis) {
