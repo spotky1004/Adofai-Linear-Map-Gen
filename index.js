@@ -3,13 +3,13 @@ pathDatas = [
   'L', 'Q', 'U', 'E', 'R',
   'C', 'D', 'Z', 'H', 'G',
   'T', 'J', 'M', 'B', 'F',
-  'N'
+  'N', '5'
 ];
 pathDeg = [
   0, 45, 90, 135, 180,
   225, 270, 315, 30, 60,
   120, 150, 210, 240, 300,
-  330
+  330, 108
 ];
 interval1 = 0;
 interval2 = 0;
@@ -43,6 +43,10 @@ $(function (){
       $('.delEffButton:eq(' + indexThis +')').removeClass('effNo').addClass('effYes');
     }
   });
+  $(document).on('click','#downloadFile',function() {
+    download('LinearAdofai' + new Date().getTime() + '.adofai', JSON.stringify(recivedFile));
+    location.reload();
+  });
 
   function copyToClipboard(val) {
     var t = document.createElement("textarea");
@@ -51,6 +55,18 @@ $(function (){
     t.select();
     document.execCommand('copy');
     document.body.removeChild(t);
+  }
+  function download(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+    if (document.createEvent) {
+      var event = document.createEvent('MouseEvents');
+      event.initEvent('click', true, true);
+      pom.dispatchEvent(event);
+    } else {
+      pom.click();
+    }
   }
 
   function openTextFile() {
@@ -165,8 +181,10 @@ $(function (){
     delActionCount = 0;
     setEtc();
     interval1 = setInterval( function () {
-      calcAction(actionCount);
-      actionCount++;
+      if (totActions >= 1) {
+        calcAction(actionCount);
+        actionCount++;
+      }
       $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(113, 176, 227, 0.8) ' + actionCount/totActions*100 + '% ' + actionCount/totActions*100 + '%, #aaa ' + actionCount/totActions*100 + '%)');
       $('#transferProgress').html(function (index,html) {
         return (actionCount/totActions*100).toFixed(1) + '%';
@@ -191,16 +209,20 @@ $(function (){
     setTimeout( function () {
       delActionCount = totActions;
       interval3 = setInterval( function () {
-        calcDelAction(delActionCount);
-        delActionCount--;
-        $('#transferProgress').html(function (index,html) {
-          return ((1-delActionCount/totActions)*100).toFixed(1) + '%';
-        });
-        $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 72, 45, 0.8) ' + (1-delActionCount/totActions)*100 + '% ' + (1-delActionCount/totActions)*100 + '%, #aaa ' + (1-delActionCount/totActions)*100 + '%)');
-        if (delActionCount <= -1) {
+        if (totActions >= 1) {
+          calcDelAction(delActionCount);
+          delActionCount--;
+          $('#transferProgress').html(function (index,html) {
+            return ((1-delActionCount/totActions)*100).toFixed(1) + '%';
+          });
+          $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 72, 45, 0.8) ' + (1-delActionCount/totActions)*100 + '% ' + (1-delActionCount/totActions)*100 + '%, #aaa ' + (1-delActionCount/totActions)*100 + '%)');
+        }
+        if (delActionCount <= -1 || totActions < 1) {
           $('#transferProgress').html(function (index,html) {
             return 'Copied to Clipboard! (Ctrl + V to paste OR Copy from Console :D)';
           });
+          $('#transferProgress').hide();
+          $('#downloadFile').show();
           setTimeout( function () {
             copyToClipboard(JSON.stringify(recivedFile));
           }, 0);
