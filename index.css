@@ -34,6 +34,7 @@
   text-align: center; font-size: 2vh; color: #333; text-shadow: 0 0 0.1vh #333;
   border: 2px dashed #333;
   background-color: rgba(200, 200, 200, 0.2);
+  cursor: pointer;
 
   transition: all 0.2s;
 }
@@ -53,6 +54,7 @@
   color: #eee; text-align: center; font-size: 2.5vh;
   box-shadow: 0.55vh 0.55vh 0.3vh #666;
   background-color: rgba(40, 40, 40, 0.3);
+  cursor: pointer;
 
   transition: all 0.1s;
 }
@@ -93,6 +95,7 @@
   width: 16vw; height: 3.5vh;
   font-size: 2vh; text-align: center; color: #fff; text-shadow: 0 0 0.3vh #fff;
   box-shadow: 0.3vh 0.3vh 0.3vh #222;
+  cursor: pointer;
   transition: all 0.2s;
 }
 .delEffButton:hover {
