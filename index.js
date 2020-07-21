@@ -83,16 +83,23 @@ $(function (){
       twirlDirect = !twirlDirect;
       twirlPointerP++;
     }
-    angleOffset = Math.abs(pathDeg[pataDataPointer]-pathDeg[pataDataPointerPrev]+180)%360;
+    angleOffset = (pathDeg[pataDataPointer]-pathDeg[pataDataPointerPrev]+180)%360;
+    if (angleOffset < 0) {
+      angleOffset = 360+angleOffset;
+    }
+    if (angleOffset > 360 || angleOffset < 0) {
+      console.log(pathDeg[pataDataPointerPrev] + ', ' + pathDeg[pataDataPointer] + ', ' + angleOffset);
+    }
+    if (angleOffset == 0) {
+      angleOffset = 360;
+    }
     if (twirlDirect == 1) {
       angleOffset = 360-angleOffset;
     }
     if (angleOffset == 0) {
       angleOffset = 360;
     }
-    if (angleOffset > 360) {
-      console.log(pathDeg[pataDataPointerPrev] + ', ' + pathDeg[pataDataPointer] + ', ' + angleOffset);
-    }
+
     if (speedChangePointer.length != speedChangePointerP && speedChangePointer[speedChangePointerP][1] == i) {
       dataThisPointer = speedChangePointer[speedChangePointerP];
       if (dataThisPointer[0] == 0) {
