@@ -11,8 +11,8 @@
 }
 #warpAll {
   position: absolute;
-  left: 15vw; top: 29vh;
-  width: 70vw; height: 42vh;
+  left: 7.5vw; top: 20vh;
+  width: 85vw; height: 60vh;
   border-radius: 1vh; box-shadow: 0 0 25px #fff;
   background-color: rgba(255, 255, 255, 0.4);
 }
@@ -30,7 +30,7 @@
 }
 #dropFile {
   margin: 2vh 0 0 10vw; padding: 7vh 0 0 0;
-  width: 50vw; height: 13vh;
+  width: 65vw; height: 13vh;
   text-align: center; font-size: 2vh; color: #333; text-shadow: 0 0 0.1vh #333;
   border: 2px dashed #333;
   background-color: rgba(200, 200, 200, 0.2);
@@ -76,4 +76,36 @@
   to {
     opacity: 1;
   }
+}
+#deleteEffect {
+  margin: 2vh 0 0 12.5vw;
+  width: 60vw; height: 20vh;
+  background-color: rgba(200, 200, 200, 0.4);
+  border-radius: 0.5vh; box-shadow: 0 0 1vh #fff;
+}
+#deleteEffect > p {
+  margin-left: 0.5vh;
+  color: #f44; font-size: 3vh;
+}
+.delEffButton {
+  margin: 0.5vh 1vw; padding: 0.5vh 0 0 0;
+  width: 16vw; height: 3.5vh;
+  font-size: 2vh; text-align: center; color: #fff; text-shadow: 0 0 0.3vh #fff;
+  box-shadow: 0.3vh 0.3vh 0.3vh #222;
+  transition: all 0.2s;
+}
+.delEffButton:hover {
+  transform: translateX(-0.2vh) translateY(-0.2vh);
+  box-shadow: 0.5vh 0.5vh 0.5vh #333;
+}
+.delEffButton:active {
+  transform: translateX(0.3vh) translateY(0.3vh);
+  box-shadow: 0 0 0 #fff;
+  transition: all 0s;
+}
+.effYes {
+  background-color: rgba(124, 227, 45, 0.4);
+}
+.effNo {
+  background-color: rgba(227, 72, 45, 0.4);
 }

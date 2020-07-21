@@ -13,6 +13,7 @@ pathDeg = [
 ];
 interval1 = 0;
 interval2 = 0;
+interval3 = 0;
 pathDataThis = 0;
 tileCount = 0;
 totTiles = 0;
@@ -23,10 +24,24 @@ bpmNow = 0;
 speedChangePointer = [];
 twirlPointer = [];
 twirlDirect = 0;
+delEffectToggle = [
+  1, 0, 0, 0, 0
+];
+delActionCount = 0;
 
 $(function (){
   $(document).on('click','#dropFile',function() {
     openTextFile();
+  });
+  $(document).on('click','.delEffButton',function() {
+    indexThis = $('.delEffButton').index(this);
+    if (delEffectToggle[indexThis] == 0) {
+      delEffectToggle[indexThis] = 1;
+      $('.delEffButton:eq(' + indexThis +')').removeClass('effYes').addClass('effNo');
+    } else {
+      delEffectToggle[indexThis] = 0;
+      $('.delEffButton:eq(' + indexThis +')').removeClass('effNo').addClass('effYes');
+    }
   });
 
   function copyToClipboard(val) {
@@ -54,7 +69,6 @@ $(function (){
       recivedFile = String(reader.result).replace(', ,', ',').replace(/},/g, '}').replace(/}/g, '},').replace(',\n	]', '\n	]').replace(/,]}/g, ']}');
       recivedFile = recivedFile.substr(0, recivedFile.lastIndexOf(","));
       recivedFile = recivedFile.replace(/, },/g, '},');
-      console.log(recivedFile);
       recivedFile = JSON.parse(recivedFile);
       makeMapLinear();
     };
@@ -118,8 +132,23 @@ $(function (){
     recivedFile["pathData"] = recivedFile["pathData"].replaceAt(i, 'R');
     pataDataPointerPrev = pataDataPointer;
   }
+  function calcDelAction(i) {
+    deleteThis = 0;
+    if (recivedFile["actions"][i]["eventType"] == "MoveCamera" && delEffectToggle[0] == 1) {
+      deleteThis = 1;
+    }
+    if (deleteThis) {
+      recivedFile["actions"].splice(i,1);
+    }
+  }
+  function setEtc() {
+    if (delEffectToggle[0] == 1) {
+      recivedFile["settings"]["rotation"] = 0;
+    }
+  }
   function makeMapLinear() {
     $('#dropFile').hide();
+    $('#deleteEffect').hide();
     $('#transferProgress').show();
     pathDataThis = recivedFile["pathData"];
     tileCount = 0;
@@ -133,6 +162,8 @@ $(function (){
     twirlPointer = [];
     twirlPointerP = 0;
     twirlDirect = 0;
+    delActionCount = 0;
+    setEtc();
     interval1 = setInterval( function () {
       calcAction(actionCount);
       actionCount++;
@@ -153,15 +184,31 @@ $(function (){
         });
         $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 200, 113, 0.8) ' + tileCount/totTiles*100 + '% ' + tileCount/totTiles*100 + '%, #aaa ' + tileCount/totTiles*100 + '%)');
         if (tileCount >= totTiles) {
-          $('#transferProgress').html(function (index,html) {
-            return 'Copied to Clipboard! (Ctrl + V to paste OR Copy from Console :D)';
-          });
-          copyToClipboard(JSON.stringify(recivedFile));
-          console.log(JSON.stringify(recivedFile));
           clearInterval(interval2);
         }
       }, 10);
     }, totActions*3+50);
+    setTimeout( function () {
+      delActionCount = totActions;
+      interval3 = setInterval( function () {
+        calcDelAction(delActionCount);
+        delActionCount--;
+        $('#transferProgress').html(function (index,html) {
+          return ((1-delActionCount/totActions)*100).toFixed(1) + '%';
+        });
+        $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 72, 45, 0.8) ' + (1-delActionCount/totActions)*100 + '% ' + (1-delActionCount/totActions)*100 + '%, #aaa ' + (1-delActionCount/totActions)*100 + '%)');
+        if (delActionCount <= -1) {
+          $('#transferProgress').html(function (index,html) {
+            return 'Copied to Clipboard! (Ctrl + V to paste OR Copy from Console :D)';
+          });
+          setTimeout( function () {
+            copyToClipboard(JSON.stringify(recivedFile));
+          }, 0);
+          console.log(JSON.stringify(recivedFile));
+          clearInterval(interval3);
+        }
+      }, 4);
+    }, totActions*3+100+10*totTiles);
   }
 
   $('#warpAll').show();
