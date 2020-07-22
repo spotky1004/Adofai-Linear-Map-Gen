@@ -43,6 +43,7 @@ interval6 = 0;
 interval7 = 0;
 speedDeletePointerP = 0;
 shiftThis = 0;
+totActions2 = 0;
 
 $(function (){
   $(document).on('click','#dropFile',function() {
@@ -227,7 +228,6 @@ $(function (){
     }
   }
   function shiftFloor(i) {
-    console.log(i);
     floorThis = recivedFile["actions"][i]["floor"];
     for (var j = 0; j < shiftFloorPointer.length; j++) {
       if (floorThis > shiftFloorPointer[j]) {
@@ -288,6 +288,7 @@ $(function (){
     deleteSpeed = 0;
     shiftFloorPointer = [];
     shiftFloorCount = 0;
+    totActions2 = 0;
     setEtc();
     interval1 = setInterval( function () {
       if (totActions >= 1) {
@@ -339,7 +340,7 @@ $(function (){
     }, totActions*5+100+((delEffectToggle[1] == 0) ? 5*totTiles : 0 ));
     interval7 = setTimeout( function () {
       recivedFile["pathData"] = recivedFile["pathData"].replace(/!/g, '');
-      totActions2 = recivedFile["actions"].length;
+      totActions2 = recivedFile["actions"].length-1;
       shiftFloorCount = totActions2-1;
       interval6 = setInterval( function () {
         if (shiftFloorPointer.length >= 1) {
