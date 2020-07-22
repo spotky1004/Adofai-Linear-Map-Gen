@@ -123,3 +123,8 @@
   text-align: center; font-size: 1.6vh; color: #222; text-shadow: 0 0 0.3vh #222;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+#transferAlert {
+  margin-top: 1vh;
+  width: 100%;
+  font-style: 1.2vh; color: rgba(255, 20, 20, 1); text-align: center;
+}

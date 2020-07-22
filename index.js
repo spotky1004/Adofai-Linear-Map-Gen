@@ -86,10 +86,7 @@ $(function (){
   }
 
   function calcAngleOffset(d1, d2) {
-    d3 = (d2-d1+180)%360;
-    if (d3 < 0) {
-      d3 = 360+d3;
-    }
+    d3 = (d2-d1+540)%360;
     if (d3 == 0) {
       d3 = 360;
     }
@@ -246,6 +243,9 @@ $(function (){
   function setEtc() {
     if (delEffectToggle[0] == 1) {
       recivedFile["settings"]["rotation"] = 0;
+      recivedFile["settings"]["relativeTo"] = "Player";
+      recivedFile["settings"]["position"] = [0, 0];
+      recivedFile["settings"]["zoom"] = 100;
     }
   }
   function errorStop() {
@@ -270,6 +270,7 @@ $(function (){
     $('#deleteEffect').hide();
     $('#infoText').hide();
     $('#transferProgress').show();
+    $('#transferAlert').show();
     pathDataThis = recivedFile["pathData"];
     tileCount = 0;
     totTiles = recivedFile["pathData"].length;
@@ -340,8 +341,8 @@ $(function (){
     }, totActions*5+100+((delEffectToggle[1] == 0) ? 5*totTiles : 0 ));
     interval7 = setTimeout( function () {
       recivedFile["pathData"] = recivedFile["pathData"].replace(/!/g, '');
-      totActions2 = recivedFile["actions"].length-1;
-      shiftFloorCount = totActions2-1;
+      totActions2 = recivedFile["actions"].length;
+      shiftFloorCount = totActions2-2;
       interval6 = setInterval( function () {
         if (shiftFloorPointer.length >= 1) {
           shiftFloor(shiftFloorCount);
@@ -360,6 +361,7 @@ $(function (){
           setTimeout( function () {
             $('#transferProgress').hide();
             $('#downloadFile').show();
+            $('#transferAlert').hide()
           }, 500);
         }
       }, 6);
