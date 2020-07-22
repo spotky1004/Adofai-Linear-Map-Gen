@@ -20,6 +20,7 @@
 #welcomeTxt {
   margin-left: 2vw;
   font-size: 4vh; color: #444; font-weight: bolder; text-shadow: 0.4vh 0.4vh 0 #888;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 #welcomeTxt > span {
   background: linear-gradient(to right, #f22, #22f);
@@ -33,6 +34,7 @@
   margin: 2vh 0 0 10vw; padding: 7vh 0 0 0;
   width: 65vw; height: 13vh;
   text-align: center; font-size: 2vh; color: #333; text-shadow: 0 0 0.1vh #333;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   border: 2px dashed #333;
   background-color: rgba(200, 200, 200, 0.2);
   cursor: pointer;
@@ -89,6 +91,7 @@
 #deleteEffect > p {
   margin-left: 0.5vh;
   color: #f44; font-size: 3vh;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .delEffButton {
   display: block; float: left;
@@ -113,4 +116,10 @@
 }
 .effNo {
   background-color: rgba(227, 72, 45, 0.4);
+}
+#infoText {
+  margin-top: 0.5vh;
+  width: 100%;
+  text-align: center; font-size: 1.6vh; color: #222; text-shadow: 0 0 0.3vh #222;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
