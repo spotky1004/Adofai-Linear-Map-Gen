@@ -10,7 +10,8 @@ pathDeg = [
   0, 45, 90, 135, 180,
   225, 270, 315, 30, 60,
   120, 150, 210, 240, 300,
-  330
+  330, 0, 0, 0, 0,
+  0
 ];
 interval1 = 0;
 interval2 = 0;
@@ -27,7 +28,9 @@ twirlPointer = [];
 speedDeletePointer = [];
 twirlDirect = 0;
 delEffectToggle = [
-  1, 0, 0, 1, 1
+  1, 0, 0,
+  1, 1, 1,
+  0, 0, 0
 ];
 delActionCount = 0;
 bpmBefore = 0;
@@ -135,7 +138,7 @@ $(function (){
         break;
       }
     }
-    if (pathDataThis[i] != '!' && pathDataThis[i] != '5' && pathDataThis[i] != '6' && pathDataThis[i] != '7' && pathDataThis[i] != '8') {
+    if ((pathDataThis[i] != '!' && pathDataThis[i] != '5' && pathDataThis[i] != '6' && pathDataThis[i] != '7' && pathDataThis[i] != '8') || !delEffectToggle[5]) {
       if (twirlPointer[twirlPointerP] == i) {
         twirlDirect = !twirlDirect;
         twirlPointerP++;
