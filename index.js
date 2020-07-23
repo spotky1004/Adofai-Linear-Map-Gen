@@ -134,6 +134,7 @@ $(function (){
         speedChangePointer.push([0, recivedFile["actions"][i]["floor"], recivedFile["actions"][i]["beatsPerMinute"], i]);
       }
     }
+    doTimeout1();
   }
   function calcTile(i) {
     for (var j = 0; j < pathDatas.length; j++) {
@@ -159,7 +160,11 @@ $(function (){
         dataThisPointer = speedChangePointer[speedChangePointerP];
         if (dataThisPointer[0] == 0) {
           bpmNow = dataThisPointer[2];
-          if (bpmNow != Math.abs((1/(angleOffset/180))*bpmNow)) {
+          recivedFile["actions"][dataThisPointer[3]]["speedType"] = "Bpm";
+          recivedFile["actions"][dataThisPointer[3]]["beatsPerMinute"] = (1/(angleOffset/180))*bpmNow;
+          bpmBefore = Math.abs((1/(angleOffset/180))*bpmNow);
+          /* if (bpmNow != Math.abs((1/(angleOffset/180))*bpmNow)) {
+            recivedFile["actions"][dataThisPointer[3]]["speedType"] = "Bpm";
             recivedFile["actions"][dataThisPointer[3]]["beatsPerMinute"] = (1/(angleOffset/180))*bpmNow;
             bpmBefore = Math.abs((1/(angleOffset/180))*bpmNow);
           } else {
@@ -167,10 +172,14 @@ $(function (){
             if (speedDeletePointer.length == 1) {
               deleteSpeed = 1;
             }
-          }
+          } */
         } else {
           bpmNow = bpmNow*dataThisPointer[2];
-          if (bpmNow != Math.abs((1/(angleOffset/180))*bpmNow)) {
+          recivedFile["actions"][dataThisPointer[3]]["speedType"] = "Bpm";
+          recivedFile["actions"][dataThisPointer[3]]["beatsPerMinute"] = (1/(angleOffset/180))*bpmNow;
+          bpmBefore = Math.abs((1/(angleOffset/180))*bpmNow);
+          /* if (bpmNow != Math.abs((1/(angleOffset/180))*bpmNow)) {
+            recivedFile["actions"][dataThisPointer[3]]["speedType"] = "Bpm";
             recivedFile["actions"][dataThisPointer[3]]["beatsPerMinute"] = (1/(angleOffset/180))*bpmNow;
             bpmBefore = Math.abs((1/(angleOffset/180))*bpmNow);
           } else {
@@ -178,7 +187,7 @@ $(function (){
             if (speedDeletePointer.length == 1) {
               deleteSpeed = 1;
             }
-          }
+          } */
         }
         speedChangePointerP++;
       } else if (angleOffset == 180) {
@@ -201,6 +210,7 @@ $(function (){
         errorStop();
       }
     }
+    doTimeout2();
   }
   function calcDelAction(i) {
     deleteThis = 0;
@@ -223,6 +233,7 @@ $(function (){
     if (deleteThis) {
       recivedFile["actions"].splice(i,1);
     }
+    doTimeout3();
   }
   function shiftFloor(i) {
     floorThis = recivedFile["actions"][i]["floor"];
@@ -239,6 +250,87 @@ $(function (){
     } else {
       recivedFile["actions"].splice(i,1);
     }
+    doTimeout4();
+  }
+  function doTimeout1() {
+    interval1 = setTimeout( function () {
+      if (totActions >= 1) {
+        calcAction(actionCount);
+        actionCount++;
+        progressNow = actionCount/totActions*100;
+        $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(113, 176, 227, 0.8) ' + progressNow + '% ' + progressNow + '%, #aaa ' + progressNow + '%)');
+        $('#transferProgress').html(function (index,html) {
+          return (progressNow).toFixed(1) + '% (Searching Actions... ' + actionCount + ' )';
+        });
+      }
+      if (actionCount >= totActions) {
+        clearTimeout(interval1);
+        doTimeout2();
+      }
+    }, 10);
+  }
+  function doTimeout2() {
+    interval2 = setTimeout( function () {
+      if (delEffectToggle[1] == 0) {
+        calcTile(tileCount);
+        progressNow = tileCount/totTiles*100;
+        $('#transferProgress').html(function (index,html) {
+          return (progressNow).toFixed(1) + '% (Searching Tiles & Putting Rabbits and Turtles... ' + tileCount + ' )';
+        });
+        $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 200, 113, 0.8) ' + progressNow + '% ' + progressNow + '%, #aaa ' + progressNow + '%)');
+      }
+      tileCount++;
+      if (tileCount+1 > totTiles || delEffectToggle[1] == 1) {
+        clearTimeout(interval2);
+        delActionCount = totActions-1;
+        speedDeletePointerP = speedDeletePointer.length-1;
+        doTimeout3();
+      }
+    }, 10);
+  }
+  function doTimeout3() {
+    interval3 = setTimeout( function () {
+      if (totActions >= 1) {
+        calcDelAction(delActionCount);
+        delActionCount--;
+        progressNow = (1-delActionCount/totActions)*100
+        $('#transferProgress').html(function (index,html) {
+          return (progressNow).toFixed(1) + '% (Deleting Actions... ' + delActionCount + ' )';
+        });
+        $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 72, 45, 0.8) ' + progressNow + '% ' + progressNow + '%, #aaa ' + progressNow + '%)');
+      }
+      if ((delActionCount <= -1 || totActions < 1) && (deleteSpeed == 0 || delActionCount <= 0)) {
+        clearTimeout(interval3);
+        recivedFile["pathData"] = recivedFile["pathData"].replace(/!/g, '');
+        totActions2 = recivedFile["actions"].length;
+        shiftFloorCount = totActions2-2;
+        doTimeout4();
+      }
+    }, 10);
+  }
+  function doTimeout4() {
+    interval4 = setTimeout( function () {
+      if (shiftFloorPointer.length >= 1) {
+        shiftFloor(shiftFloorCount);
+        shiftFloorCount--;
+        progressNow = (1-shiftFloorCount/totActions2)*100;
+        $('#transferProgress').html(function (index,html) {
+          return (progressNow).toFixed(1) + '% (Shifting wrong Floors... ' + shiftFloorCount + ' )';
+        });
+        $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(45, 227, 163, 0.8) ' + progressNow + '% ' + progressNow + '%, #aaa ' + progressNow + '%)');
+      }
+      if (shiftFloorCount < 0 || shiftFloorPointer.length == 0) {
+        $('#transferProgress').html(function (index,html) {
+          return 'Done!';
+        });
+        clearTimeout(interval4);
+        setTimeout( function () {
+          $('#transferProgress').hide();
+          $('#downloadFile').show();
+          $('#transferAlert').hide()
+        }, 500);
+      }
+    }, 10);
   }
   function setEtc() {
     if (delEffectToggle[0] == 1) {
@@ -250,13 +342,10 @@ $(function (){
   }
   function errorStop() {
     if (delEffectToggle[5]) {
-      clearInterval(interval1);
-      clearInterval(interval2);
-      clearInterval(interval3);
+      clearTimeout(interval1);
+      clearTimeout(interval2);
+      clearTimeout(interval3);
       clearTimeout(interval4);
-      clearTimeout(interval5);
-      clearInterval(interval6);
-      clearTimeout(interval7);
       setTimeout( function () {
         $('#transferProgress').html(function (index,html) {
           return 'Calculate Error!';
@@ -291,81 +380,7 @@ $(function (){
     shiftFloorCount = 0;
     totActions2 = 0;
     setEtc();
-    interval1 = setInterval( function () {
-      if (totActions >= 1) {
-        calcAction(actionCount);
-        actionCount++;
-        progressNow = actionCount/totActions*100;
-        $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(113, 176, 227, 0.8) ' + progressNow + '% ' + progressNow + '%, #aaa ' + progressNow + '%)');
-        $('#transferProgress').html(function (index,html) {
-          return (progressNow).toFixed(1) + '% (Searching Actions... ' + actionCount + ' )';
-        });
-      }
-      if (actionCount >= totActions) {
-        clearInterval(interval1);
-      }
-    }, 5);
-    interval4 = setTimeout( function () {
-      interval2 = setInterval( function () {
-        if (delEffectToggle[1] == 0) {
-          calcTile(tileCount);
-          progressNow = tileCount/totTiles*100;
-          $('#transferProgress').html(function (index,html) {
-            return (progressNow).toFixed(1) + '% (Searching Tiles & Putting Rabbits and Turtles... ' + tileCount + ' )';
-          });
-          $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 200, 113, 0.8) ' + progressNow + '% ' + progressNow + '%, #aaa ' + progressNow + '%)');
-        }
-        tileCount++;
-        if (tileCount+1 > totTiles || delEffectToggle[1] == 1) {
-          clearInterval(interval2);
-        }
-      }, 5);
-    }, totActions*5+50);
-    interval5 = setTimeout( function () {
-      delActionCount = totActions-1;
-      speedDeletePointerP = speedDeletePointer.length-1;
-      interval3 = setInterval( function () {
-        if (totActions >= 1) {
-          calcDelAction(delActionCount);
-          delActionCount--;
-          progressNow = (1-delActionCount/totActions)*100
-          $('#transferProgress').html(function (index,html) {
-            return (progressNow).toFixed(1) + '% (Deleting Actions... ' + delActionCount + ' )';
-          });
-          $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(227, 72, 45, 0.8) ' + progressNow + '% ' + progressNow + '%, #aaa ' + progressNow + '%)');
-        }
-        if ((delActionCount <= -1 || totActions < 1) && (deleteSpeed == 0 || delActionCount <= 0)) {
-          clearInterval(interval3);
-        }
-      }, 4);
-    }, totActions*5+100+((delEffectToggle[1] == 0) ? 5*totTiles : 0 ));
-    interval7 = setTimeout( function () {
-      recivedFile["pathData"] = recivedFile["pathData"].replace(/!/g, '');
-      totActions2 = recivedFile["actions"].length;
-      shiftFloorCount = totActions2-2;
-      interval6 = setInterval( function () {
-        if (shiftFloorPointer.length >= 1) {
-          shiftFloor(shiftFloorCount);
-          shiftFloorCount--;
-          progressNow = (1-shiftFloorCount/totActions2)*100;
-          $('#transferProgress').html(function (index,html) {
-            return (progressNow).toFixed(1) + '% (Shifting wrong Floors... ' + shiftFloorCount + ' )';
-          });
-          $('#transferProgress').css('background', 'linear-gradient(90deg, rgba(45, 227, 163, 0.8) ' + progressNow + '% ' + progressNow + '%, #aaa ' + progressNow + '%)');
-        }
-        if (shiftFloorCount < 0 || shiftFloorPointer.length == 0) {
-          $('#transferProgress').html(function (index,html) {
-            return 'Done!';
-          });
-          clearInterval(interval6);
-          setTimeout( function () {
-            $('#transferProgress').hide();
-            $('#downloadFile').show();
-            $('#transferAlert').hide()
-          }, 500);
-        }
-      }, 6);
-    }, totActions*5+100+((delEffectToggle[1] == 0) ? 5*totTiles : 0 )+((totActions >= 1) ? 4*totActions : 0));
+    doTimeout1();
   }
 
   $('#warpAll').show();
