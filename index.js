@@ -303,7 +303,7 @@ $(function (){
         clearTimeout(interval3);
         recivedFile["pathData"] = recivedFile["pathData"].replace(/!/g, '');
         totActions2 = recivedFile["actions"].length;
-        shiftFloorCount = totActions2-2;
+        shiftFloorCount = totActions2-1;
         doTimeout4();
       }
     }, 10);
